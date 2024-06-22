@@ -2,16 +2,16 @@
 # GLOBALS                                                                       #
 #################################################################################
 
-PROJECT_NAME = mlflow-practice
-PYTHON_VERSION = 3.10
-PYTHON_INTERPRETER = python
-POSTGRES_DB = mlflowdb
-POSTGRES_USER = user
-POSTGRES_PASSWORD = password
-POSTGRES_HOST = localhost
-POSTGRES_PORT = 5432
-POSTGRES_URI = postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)
-MLFLOW_S3_ENDPOINT_URL = http://localhost:9000
+PROJECT_NAME=mlflow-practice
+PYTHON_VERSION=3.10
+PYTHON_INTERPRETER=python
+POSTGRES_DB=mlflowdb
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_URI=postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)
+MLFLOW_S3_ENDPOINT_URL=http://localhost:9000
 AWS_ACCESS_KEY_ID=minioadmin
 AWS_SECRET_ACCESS_KEY=minioadmin
 
@@ -31,6 +31,12 @@ mlflow-server:
 
 .PHONY: tracking-storage
 tracking-storage:
+	echo $(POSTGRES_DB)
+	POSTGRES_DB=$(POSTGRES_DB) \
+	POSTGRES_USER=$(POSTGRES_USER) \
+	POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \
+	AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+	AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
 	docker compose up -d
 
 .PHONY: mlflow-plus-storage

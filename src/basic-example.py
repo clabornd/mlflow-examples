@@ -8,10 +8,11 @@ import tempfile
 from omegaconf import OmegaConf
 import hydra
 
+
 @hydra.main(version_base=None, config_path="../cfg", config_name="config")
 def main(cfg):
     cfg = OmegaConf.to_container(cfg, resolve=True)
-    mlflow.set_experiment(cfg['experiment_name'])
+    mlflow.set_experiment(cfg["experiment_name"])
     # mlflow.autolog()
 
     with mlflow.start_run():
@@ -22,7 +23,7 @@ def main(cfg):
         X_train, X_test, y_train, y_test = train_test_split(db.data, db.target)
 
         # Create and train models.
-        model = hydra.utils.instantiate(cfg['model'])
+        model = hydra.utils.instantiate(cfg["model"])
 
         model.fit(X_train, y_train)
 
@@ -36,6 +37,7 @@ def main(cfg):
 
         preds = model.predict(X_test)
         mlflow.log_metrics({"mse": mean_squared_error(y_test, preds)})
+
 
 if __name__ == "__main__":
     main()
