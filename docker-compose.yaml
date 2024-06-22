@@ -36,3 +36,17 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - ./minio-data:/data
+  minio-create-bucket:
+      image: minio/mc
+      depends_on:
+        minio:
+          condition: service_healthy
+      entrypoint: >
+        bash -c "
+        mc alias set minio http://minio:9000 ${AWS_ACCESS_KEY_ID:-minioadmin} ${AWS_SECRET_ACCESS_KEY:-minioadmin} &&
+        if ! mc ls minio | grep --quiet bucket; then
+          mc mb minio/${AWS_BUCKET:-mlruns}
+        else
+          echo 'bucket already exists'
+        fi
+        "

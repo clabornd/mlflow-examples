@@ -1,0 +1,6 @@
+# @package _global_
+hydra:
+  sweeper:
+    params:
+      model: svm
+      model.C: 0.1,1,11

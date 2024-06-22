@@ -14,6 +14,7 @@ POSTGRES_URI=postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST)
 MLFLOW_S3_ENDPOINT_URL=http://localhost:9000
 AWS_ACCESS_KEY_ID=minioadmin
 AWS_SECRET_ACCESS_KEY=minioadmin
+AWS_BUCKET=mlflow
 
 #################################################################################
 # COMMANDS                                                                      #
@@ -37,6 +38,7 @@ tracking-storage:
 	POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \
 	AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
 	AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+	AWS_BUCKE=$(AWS_BUCKET) \
 	docker compose up -d
 
 .PHONY: mlflow-plus-storage
