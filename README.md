@@ -4,7 +4,9 @@
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
 </a>
 
-Tutorials and personal practice using mlflow with actual cloud storage and a postgres db.  I also throw in some [hydra](https://github.com/facebookresearch/hydra) for more tool learning, but this could easily be recreated with simple argparse.
+Tutorials and personal practice using mlflow with actual cloud storage and a postgres db.  I also throw in some [hydra](https://github.com/facebookresearch/hydra) for more tool learning, but this could easily be recreated with simple argparse.  
+
+For a longer explanation, I made a blog post about it [here](https://clabornd.github.io/dmcblog/posts/mlflow-hydra/mlflow-hydra.html).
 
 ## Setup
 
@@ -76,9 +78,33 @@ Then run the example experiment:
 python src/basic-example.py
 ```
 
-The parameters are controlled by [hydra](https://github.com/facebookresearch/hydra).  It is a way to create structured configs, where for instance you have models, dataloaders, etc. that can all be configured in a schmogasbord of ways.  You can, for example change from the default of training a random forest to training an SVM:
+## Running With Remote Storage
+
+To run with remote storage, first spin up a postgres db and minio/s3 service.  For example, you can run the same docker-compose file on an AWS ec2 instance (and then set appropriate security rules etc.).
+
+Then, simply change the `MLFLOW_S3_ENDPOINT_URL` environment variable and `--backend-store-uri` flag to the appropriate values, e.g.:
 
 ```bash
+mlflow server \
+    --backend-store-uri postgresql://user:password@<ec2-instance-address-running-postgres>:5432/mlflowdb \
+    --artifacts-destination s3://mlruns \
+    --host 0.0.0.0 \
+    --port 5000
+```
+
+```bash
+export MLFLOW_S3_ENDPOINT_URL=http://<ec2-instance-address-running-minio>:9000
+export AWS_ACCESS_KEY_ID=...
+
+python src/basic-example.py
+```
+
+## Extra Options With Hydra
+
+The parameters of the training script are controlled by [hydra](https://github.com/facebookresearch/hydra).  It is a way to create structured configs, where for instance you have models, dataloaders, etc. that can all be configured in a schmogasbord of ways.  You can, for example change from the default of training a random forest to training an SVM:
+
+```bash
+# change model
 python src/basic-example.py model=svm
 
 # with a different hyperparameter
@@ -86,4 +112,7 @@ python src/basic-example.py model=svm model.C=0.1
 
 # or change the experiment name
 python src/basic-example.py experiment_name=my_experiment
+
+# start multiple runs with different hyperparameters
+python src/basic-example.py model=svm model.C=0.1,1,10
 ```
