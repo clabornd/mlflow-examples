@@ -1,0 +1,3 @@
+_target_: xgboost.XGBRegressor
+max_depth: 3
+learning_rate: 0.1
