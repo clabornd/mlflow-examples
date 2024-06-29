@@ -14,7 +14,7 @@ POSTGRES_URI=postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST)
 MLFLOW_S3_ENDPOINT_URL=http://localhost:9000
 AWS_ACCESS_KEY_ID=minioadmin
 AWS_SECRET_ACCESS_KEY=minioadmin
-AWS_BUCKET=mlflow
+AWS_BUCKET=mlruns
 
 #################################################################################
 # COMMANDS                                                                      #
@@ -23,12 +23,13 @@ AWS_BUCKET=mlflow
 ## Start mlfow tracking server
 .PHONY: mlflow-server
 mlflow-server:
-	echo $(POSTGRES_URI)
-	mlflow server \
-		--backend-store-uri $(POSTGRES_URI) \
-		--artifacts-destination s3://mlruns \
-		--host 0.0.0.0 \
-		--port 5000
+	POSTGRES_DB=$(POSTGRES_DB) \
+	POSTGRES_USER=$(POSTGRES_USER) \
+	POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \
+	AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+	AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+	AWS_BUCKET=$(AWS_BUCKET) \
+	docker compose --profile frontend up -d
 
 .PHONY: tracking-storage
 tracking-storage:
@@ -38,8 +39,8 @@ tracking-storage:
 	POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \
 	AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
 	AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
-	AWS_BUCKE=$(AWS_BUCKET) \
-	docker compose up -d
+	AWS_BUCKET=$(AWS_BUCKET) \
+	docker compose --profile backend up -d
 
 .PHONY: mlflow-plus-storage
 mlflow-plus-storage: tracking-storage mlflow-server

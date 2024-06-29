@@ -1,0 +1,6 @@
+FROM ghcr.io/mlflow/mlflow
+
+RUN pip install psycopg2-binary boto3
+
+COPY entrypoint-mlflow.sh /entrypoint-mlflow.sh
+RUN chmod +x /entrypoint-mlflow.sh

@@ -27,7 +27,7 @@ conda env create -f environment.yml
 First, spin up the minio and postgres services:
 
 ```bash
-docker-compose up -d
+docker-compose --profile backend up -d
 
 # using make
 make tracking-storage
@@ -37,7 +37,7 @@ Start the tracking server:
 
 ```bash
 mlflow server \
-    --backend-store-uri postgresql://user:password@localhost:5432/mlflowdb \
+    --backend-store-uri postgresql://user:password@localhost:5432/mlflow \
     --artifacts-destination s3://mlruns \
     --host 0.0.0.0 \
     --port 5000
@@ -52,23 +52,22 @@ Or you can start both using make:
 make mlflow-plus-storage
 ```
 
-See `docker-compose.yaml` and `Makefile` to see environment variables that control the services.  You can edit them by setting any of the environment variables:
+See `docker-compose.yaml` and `Makefile` to see environment variables that control the services and their defaults.  You can edit them by setting any of the environment variables, preferably through some secrets file, but here it is in bash:
 
 ```bash
 export POSTGRES_USER=user2
 export POSTGRES_PASSWORD=password2
+export AWS_ACCESS_KEY_ID=minioadmin # minio username
+export AWS_SECRET_ACCESS_KEY=minioadmin # minio password
 
 make mlflow-plus-storage
 ```
 
 ### Run Example Experiment
 
-First, set a few environment variables, preferably from some serets file, but here it is in bash:
+Finally, run the example experiment, setting the `MLFLOW_TRACKING_URI` environment variable to the address of the mlflow server:
 
 ```bash
-export MLFLOW_S3_ENDPOINT_URL=http://localhost:9000 # where the minio service is running
-export AWS_ACCESS_KEY_ID=minioadmin # minio username
-export AWS_SECRET_ACCESS_KEY=minioadmin # minio password
 export MLFLOW_TRACKING_URI=http://localhost:5000 # where the mlflow server is running
 ```
 
@@ -85,16 +84,34 @@ To run with remote storage, first spin up a postgres db and minio/s3 service.  F
 Then, simply change the `MLFLOW_S3_ENDPOINT_URL` environment variable and `--backend-store-uri` flag to the appropriate values, e.g.:
 
 ```bash
+export MLFLOW_S3_ENDPOINT_URL=http://<ec2-instance-address-running-minio>:9000
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+
 mlflow server \
-    --backend-store-uri postgresql://user:password@<ec2-instance-address-running-postgres>:5432/mlflowdb \
+    --backend-store-uri postgresql://user:password@<ec2-instance-address-running-postgres>:5432/mlflow \
     --artifacts-destination s3://mlruns \
     --host 0.0.0.0 \
     --port 5000
 ```
 
 ```bash
-export MLFLOW_S3_ENDPOINT_URL=http://<ec2-instance-address-running-minio>:9000
-export AWS_ACCESS_KEY_ID=...
+export MLFLOW_TRACKING_URI=http://localhost:5000
+
+python src/basic-example.py
+```
+
+Alternatively, you can run the full docker-compose setup on the ec2 instance and then just set `MLFLOW_TRACKING_URI=http://<ec2-instance-address>:5000` before running the script.
+
+```bash
+# in ec2, just set whatever environment variables you want and then run
+docker compose up
+```
+
+and then locally:
+
+```bash
+export MLFLOW_TRACKING_URI=http://<ec2-instance-address>:5000
 
 python src/basic-example.py
 ```
