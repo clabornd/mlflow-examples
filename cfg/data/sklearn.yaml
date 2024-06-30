@@ -1,0 +1,2 @@
+_target_: mlflow_practice.data.sklearn.SklData
+dataset_name: "diabetes"

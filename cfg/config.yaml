@@ -1,4 +1,6 @@
 defaults:
-  - model: randomforest
+  - model/sklearn: randomforest
+  - model/stable_baselines: PPO
+  - data: sklearn
 
 experiment_name: mlflow-practice

@@ -19,11 +19,14 @@ def main(cfg):
         mlflow.log_params(cfg)
         # Load the diabetes dataset.
 
-        db = load_diabetes()
-        X_train, X_test, y_train, y_test = train_test_split(db.data, db.target)
+        db = hydra.utils.instantiate(cfg["data"])
+        X = db.get_X()
+        y = db.get_y()
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y)
 
         # Create and train models.
-        model = hydra.utils.instantiate(cfg["model"])
+        model = hydra.utils.instantiate(cfg["model"]["sklearn"])
 
         model.fit(X_train, y_train)
 

@@ -74,6 +74,9 @@ export MLFLOW_TRACKING_URI=http://localhost:5000 # where the mlflow server is ru
 Then run the example experiment:
 
 ```bash
+# let the script see the mlflow_practice directory, where I define some classes for hydra.
+export PYTHONPATH=.
+
 python src/basic-example.py
 ```
 
@@ -121,6 +124,9 @@ python src/basic-example.py
 The parameters of the training script are controlled by [hydra](https://github.com/facebookresearch/hydra).  It is a way to create structured configs, where for instance you have models, dataloaders, etc. that can all be configured in a schmogasbord of ways.  You can, for example change from the default of training a random forest to training an SVM:
 
 ```bash
+# let the script see the mlflow_practice directory, where I define some classes for hydra.
+export PYTHONPATH=.
+
 # change model
 python src/basic-example.py model=svm
 
