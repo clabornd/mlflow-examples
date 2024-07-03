@@ -1,4 +1,4 @@
-_target_: stable_baselines3.PPO
+_target_: stable_baselines3.A2C
 policy: "MlpPolicy"
 env: 
   _target_: gymnasium.make
