@@ -13,7 +13,6 @@ dependencies:
   - pip:
     - python-dotenv
     - awscli
-    - -e .
     - hydra-core==1.3
     - scikit-learn
     - xgboost
