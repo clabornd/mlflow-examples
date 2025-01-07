@@ -17,5 +17,6 @@ dependencies:
     - scikit-learn
     - xgboost
     - mlflow
+    - polars
     - psycopg2
     - boto3
