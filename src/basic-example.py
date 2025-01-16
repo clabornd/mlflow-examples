@@ -1,6 +1,4 @@
 import mlflow
-from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_diabetes
 from sklearn.metrics import mean_squared_error
 import pickle
 import tempfile
@@ -19,11 +17,11 @@ def main(cfg):
         mlflow.log_params(cfg)
         # Load the diabetes dataset.
 
-        db = hydra.utils.instantiate(cfg["data"])
-        X = db.get_X()
-        y = db.get_y()
+        data_obj = hydra.utils.instantiate(cfg["data"])
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y)
+        # for simple sklearn datasets, we would implement a separate get_train and get_test method
+        # so we can keep the same api.
+        X_train, X_test, y_train, y_test = data_obj.get_train_test_splits()
 
         # Create and train models.
         model = hydra.utils.instantiate(cfg["model"]["sklearn"])
