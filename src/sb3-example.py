@@ -41,7 +41,7 @@ def main(cfg):
     cfg = OmegaConf.to_container(cfg, resolve=True)
     mlflow.set_experiment(cfg["experiment_name"])
 
-    model = hydra.utils.instantiate(cfg["model"]["stable_baselines"])
+    model = hydra.utils.instantiate(cfg["model"])
     
     model.set_logger(loggers)
     model.learn(total_timesteps=10_000)

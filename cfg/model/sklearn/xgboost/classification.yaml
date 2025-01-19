@@ -1,0 +1,3 @@
+_target_: xgboost.XGBClassifier
+max_depth: 3
+learning_rate: 0.1

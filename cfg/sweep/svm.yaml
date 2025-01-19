@@ -2,5 +2,5 @@
 hydra:
   sweeper:
     params:
-      model/sklearn: svm
-      model.sklearn.C: 0.1,1,11
+      model: sklearn/svm/regression
+      model.C: 0.1,1,11

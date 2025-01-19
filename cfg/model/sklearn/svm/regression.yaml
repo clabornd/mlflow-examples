@@ -1,0 +1,4 @@
+_target_: sklearn.svm.SVR
+C: 1.0
+gamma: scale
+kernel: rbf

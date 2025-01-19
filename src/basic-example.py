@@ -24,7 +24,7 @@ def main(cfg):
         X_train, X_test, y_train, y_test = data_obj.get_train_test_splits()
 
         # Create and train models.
-        model = hydra.utils.instantiate(cfg["model"]["sklearn"])
+        model = hydra.utils.instantiate(cfg["model"])
 
         model.fit(X_train, y_train)
 
