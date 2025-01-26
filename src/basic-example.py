@@ -11,7 +11,7 @@ import hydra
 def main(cfg):
     cfg = OmegaConf.to_container(cfg, resolve=True)
     mlflow.set_experiment(cfg["experiment_name"])
-    # mlflow.autolog()
+    # mlflow.sklearn.autolog()
 
     with mlflow.start_run():
         mlflow.log_params(cfg)
