@@ -1,0 +1,3 @@
+_target_: mlflow_practice.data.sql.postgres.OlympicsDataset
+config_path: null
+query: "SELECT * FROM athlete_events"
