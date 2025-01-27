@@ -1,11 +1,15 @@
 import mlflow
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, roc_auc_score
 import pickle
 import tempfile
 
 from omegaconf import OmegaConf
 import hydra
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 @hydra.main(version_base=None, config_path="../cfg", config_name="config")
 def main(cfg):
@@ -36,9 +40,20 @@ def main(cfg):
 
             mlflow.log_artifact(model_path)
 
-        preds = model.predict(X_test)
-        mlflow.log_metrics({"mse": mean_squared_error(y_test, preds)})
+        # log test set performance depending on task type
+        if cfg.get("task"):
+            if cfg['task'] == "classification":
+                probs = model.predict_proba(X_test)
+                performance = roc_auc_score(y_test, probs, multi_class="ovr")
+                mlflow.log_metrics({"roc_auc_score": performance})
+            elif cfg['task'] == 'regression':
+                preds = model.predict(X_test)
+                performance = mean_squared_error(y_test, preds)
+                mlflow.log_metrics({"mean_squared_error": performance})
+        else:
+            logger.warning("No task specified, attempting to infer task by target type")
 
-
+            # actually attempt to infer type here....this is why it seems like all of this should be wrapped in an 'experiment' class.
+            
 if __name__ == "__main__":
     main()

@@ -1,4 +1,5 @@
 import polars as pl
+import polars.selectors as cs
 from sklearn.preprocessing import TargetEncoder
 import yaml
 import os
@@ -69,8 +70,8 @@ class PostgresDataSet:
     def preprocess_y(self, df, **kwargs):
         return(df)
     
-    def get_data(self):
-        return self.raw
+    def get_train_test_splits(self):
+        raise NotImplementedError("get_train_test_splits is not implemented for the base class PostGresDataset")
 
 class OlympicsDataset(PostgresDataSet):
     """
@@ -94,7 +95,7 @@ class OlympicsDataset(PostgresDataSet):
         self.encoders = {}
 
     def impute_X(self, df):
-        df = df.with_columns(pl.all().fill_null(pl.all().median()))
+        df = df.with_columns(cs.numeric().fill_null(cs.numeric().median()))
 
         return df
 
@@ -112,8 +113,6 @@ class OlympicsDataset(PostgresDataSet):
             ).unnest(f"{cc}_encoding")
 
             self.encoders[cc] = enc
-
-        X_train = X_train.with_columns(pl.all().fill_null(pl.all().median()))
 
         # drop the encoded categorical columns
         df = df.drop(cat_cols + ['index', 'id'])
@@ -141,7 +140,7 @@ class OlympicsDataset(PostgresDataSet):
 
         return out_struct.to_series()
     
-    def get_train_test_splits(self):
+    def get_train_test_splits(self, return_numpy = True):
         df = self.raw.with_columns(pl.col("medal").fill_null('DNP'))
 
         train_idx = (
@@ -167,4 +166,17 @@ class OlympicsDataset(PostgresDataSet):
         y_test = X_test.select(pl.col("medal"))
         X_test = X_test.drop("medal")
 
+        if return_numpy:
+            X_train = X_train.to_numpy()
+            X_test = X_test.to_numpy()
+            y_train = y_train.to_numpy()
+            y_test = y_test.to_numpy()
+
+            if y_train.shape[1] == 1:
+                y_train = y_train.ravel()
+            
+            if y_test.shape[1] == 1:
+                y_test = y_test.ravel()
+
         return X_train, X_test, y_train, y_test
+    

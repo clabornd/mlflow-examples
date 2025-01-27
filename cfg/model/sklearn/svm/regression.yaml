@@ -1,4 +1,9 @@
-_target_: sklearn.svm.SVR
-C: 1.0
-gamma: scale
-kernel: rbf
+# @package _global_
+
+model:
+  _target_: sklearn.svm.SVR
+  C: 1.0
+  gamma: scale
+  kernel: rbf
+
+task: regression
