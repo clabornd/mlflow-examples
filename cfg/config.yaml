@@ -1,6 +1,7 @@
 defaults:
-  - model/sklearn: randomforest
-  - model/stable_baselines: PPO
+  - _self_
+  - model: sklearn/randomforest/classification
   - data: sklearn
 
+task: classification
 experiment_name: mlflow-practice

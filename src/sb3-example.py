@@ -31,7 +31,7 @@ class MLflowOutputFormat(KVWriter):
                 if not isinstance(value, str):
                     mlflow.log_metric(key, value, step)
 
-@hydra.main(version_base=None, config_path="../cfg", config_name="config")
+@hydra.main(version_base=None, config_path="../cfg-rl", config_name="config")
 def main(cfg):
     loggers = Logger(
         folder=None,
@@ -41,7 +41,7 @@ def main(cfg):
     cfg = OmegaConf.to_container(cfg, resolve=True)
     mlflow.set_experiment(cfg["experiment_name"])
 
-    model = hydra.utils.instantiate(cfg["model"]["stable_baselines"])
+    model = hydra.utils.instantiate(cfg["model"])
     
     model.set_logger(loggers)
     model.learn(total_timesteps=10_000)

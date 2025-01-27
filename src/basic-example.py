@@ -1,32 +1,34 @@
 import mlflow
-from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_diabetes
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, roc_auc_score
 import pickle
 import tempfile
 
 from omegaconf import OmegaConf
 import hydra
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 @hydra.main(version_base=None, config_path="../cfg", config_name="config")
 def main(cfg):
     cfg = OmegaConf.to_container(cfg, resolve=True)
     mlflow.set_experiment(cfg["experiment_name"])
-    # mlflow.autolog()
+    # mlflow.sklearn.autolog()
 
     with mlflow.start_run():
         mlflow.log_params(cfg)
         # Load the diabetes dataset.
 
-        db = hydra.utils.instantiate(cfg["data"])
-        X = db.get_X()
-        y = db.get_y()
+        data_obj = hydra.utils.instantiate(cfg["data"])
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y)
+        # for simple sklearn datasets, we would implement a separate get_train and get_test method
+        # so we can keep the same api.
+        X_train, X_test, y_train, y_test = data_obj.get_train_test_splits()
 
         # Create and train models.
-        model = hydra.utils.instantiate(cfg["model"]["sklearn"])
+        model = hydra.utils.instantiate(cfg["model"])
 
         model.fit(X_train, y_train)
 
@@ -38,9 +40,20 @@ def main(cfg):
 
             mlflow.log_artifact(model_path)
 
-        preds = model.predict(X_test)
-        mlflow.log_metrics({"mse": mean_squared_error(y_test, preds)})
+        # log test set performance depending on task type
+        if cfg.get("task"):
+            if cfg['task'] == "classification":
+                probs = model.predict_proba(X_test)
+                performance = roc_auc_score(y_test, probs, multi_class="ovr")
+                mlflow.log_metrics({"roc_auc_score": performance})
+            elif cfg['task'] == 'regression':
+                preds = model.predict(X_test)
+                performance = mean_squared_error(y_test, preds)
+                mlflow.log_metrics({"mean_squared_error": performance})
+        else:
+            logger.warning("No task specified, attempting to infer task by target type")
 
-
+            # actually attempt to infer type here....this is why it seems like all of this should be wrapped in an 'experiment' class.
+            
 if __name__ == "__main__":
     main()
