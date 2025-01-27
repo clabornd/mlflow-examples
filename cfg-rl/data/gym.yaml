@@ -1,0 +1,3 @@
+_target_: gymnasium.make
+id: CartPole-v1
+render_mode: rgb_array

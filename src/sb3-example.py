@@ -31,7 +31,7 @@ class MLflowOutputFormat(KVWriter):
                 if not isinstance(value, str):
                     mlflow.log_metric(key, value, step)
 
-@hydra.main(version_base=None, config_path="../cfg", config_name="config")
+@hydra.main(version_base=None, config_path="../cfg-rl", config_name="config")
 def main(cfg):
     loggers = Logger(
         folder=None,
