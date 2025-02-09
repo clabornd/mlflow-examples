@@ -108,7 +108,7 @@ class OlympicsDataset(PostgresDataSet):
 
             df = df.with_columns(
                 pl.struct([cc, 'medal']).map_batches(
-                    lambda x: self.encode_struct(x, cc, 'medal', enc, do_fit)
+                    lambda x: self._encode_struct(x, cc, 'medal', enc, do_fit)
                 ).alias(f"{cc}_encoding")
             ).unnest(f"{cc}_encoding")
 
@@ -119,7 +119,7 @@ class OlympicsDataset(PostgresDataSet):
 
         return self.impute_X(df)
 
-    def encode_struct(self, struct, variable, target, encoder, do_fit=True):
+    def _encode_struct(self, struct, variable, target, encoder, do_fit=True):
         X = struct.struct.field(variable).to_numpy()
         y = struct.struct.field(target).to_numpy()
 
