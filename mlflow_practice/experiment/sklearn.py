@@ -1,6 +1,7 @@
 from .base import BaseExperiment
 import mlflow
 from sklearn.metrics import mean_squared_error, roc_auc_score
+import numpy as np
 
 import logging
 
@@ -41,6 +42,19 @@ class SkLearnExperiment(BaseExperiment):
         splits = self.data.get_train_test_splits()
 
         X_train, X_test, y_train, y_test = self.preprocess(*splits)
+
+        # check if they have chosen the right algorithm
+        if self.task == "classification":
+            train_classes = np.unique(y_train)
+            test_classes = np.unique(y_test)
+            intx_classes = np.intersect1d(train_classes, test_classes)
+
+            if not len(train_classes) == len(test_classes) == len(intx_classes):
+                logger.warning("You selected classification but your train and test target variables do not have the same classes, problems may arise.  Check that your data is a classification task or specify `model=<algo>/regression` if you meant to perform regression.")
+        
+        if self.task == "regression":
+            if not np.issubdtype(y_train.dtype, np.number) or not np.issubdtype(y_test.dtype, np.number):
+                logger.warning("You specified a regression algorithm but your train and/or test target variables are non-numeric, problems may arise.  Check that your data specifies a regression task or specify model=<algo>/classification` if you meant to perform classification.")
 
         self.model.fit(X_train, y_train)
 

@@ -6,5 +6,8 @@ class BaseExperiment:
     def evaluate(self):
         raise NotImplementedError
     
+    def preprocess(self):
+        raise NotImplementedError
+    
     def run(self):
         raise NotImplementedError
