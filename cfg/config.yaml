@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - model: sklearn/randomforest/classification
+  - model: randomforest/classification
   - data: sklearn
 
 task: classification

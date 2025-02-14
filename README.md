@@ -127,15 +127,18 @@ The parameters of the training script are controlled by [hydra](https://github.c
 # let the script see the mlflow_practice directory, where I define some classes for hydra.
 export PYTHONPATH=.
 
-# change model
-python src/basic-example.py model=svm
+# change model to svm performing classification
+python src/basic-example.py model=svm/classification
+
+# ..randomforest performing regression on a different dataset with a regression task
+python src/basic-example.py model=randomforest/regression data.dataset_name=diabetes
 
 # with a different hyperparameter
-python src/basic-example.py model=svm model.C=0.1
+python src/basic-example.py model=svm/regression model.C=0.1
 
 # or change the experiment name
 python src/basic-example.py experiment_name=my_experiment
 
 # start multiple runs with different hyperparameters
-python src/basic-example.py model=svm model.C=0.1,1,10
+python src/basic-example.py -m model=svm/classification model.C=0.1,1,10
 ```
