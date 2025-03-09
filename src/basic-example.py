@@ -1,3 +1,7 @@
+"""
+This script runs mostly sklearn based examples.  The configs can be found in cfg/
+"""
+
 import mlflow
 from sklearn.metrics import mean_squared_error, roc_auc_score
 import pickle

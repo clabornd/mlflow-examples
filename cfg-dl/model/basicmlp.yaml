@@ -1,0 +1,7 @@
+_target_: mlflow_practice.models.basic.BasicMLPClassifier
+layer_sizes: [512, 512]
+prediction_dim: 10
+activation_fn: 
+  _target_: torch.nn.ReLU
+  _partial_: true
+input_shape: [64, 64]

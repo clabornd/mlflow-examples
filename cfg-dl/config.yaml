@@ -1,0 +1,8 @@
+defaults:
+  - _self_
+  - model: basicmlp
+  - data: mnist
+  - optimizer: adam
+
+epochs: 50
+experiment_name: mlflow-dl

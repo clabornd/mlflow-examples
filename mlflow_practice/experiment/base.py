@@ -1,5 +1,5 @@
 class BaseExperiment:
-    def __init__(self, model, data, **kwargs):
+    def __init__(self, model, data):
         self.model = model
         self.data = data
 

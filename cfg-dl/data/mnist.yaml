@@ -1,0 +1,22 @@
+defaults:
+  - _self_
+  - transform@train: mnist_pytorch
+  - transform@test: mnist_pytorch
+
+train:
+  _target_: torch.utils.data.DataLoader
+  dataset:
+    _target_: torchvision.datasets.MNIST
+    root: '../data'
+    train: true
+    download: true
+  batch_size: 32
+
+test:
+  _target_: torch.utils.data.DataLoader
+  dataset:
+    _target_: torchvision.datasets.MNIST
+    root: '../data'
+    train: false
+    download: true
+  batch_size: 32

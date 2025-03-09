@@ -1,0 +1,4 @@
+dataset:
+  transform:
+    _target_:  mlflow_practice.data.pytorch.transforms.MNISTDefault
+    flatten: true
