@@ -1,4 +1,7 @@
-"""Load a trained SB3 model from an MLflow run and render episodes."""
+"""Load a trained SB3 model from an MLflow run and render episodes.
+
+Find your run id through the mlflow ui or with `mlflow runs list -e mlflow-practice` (or your experiment name).
+"""
 
 import argparse
 import mlflow

@@ -50,7 +50,7 @@ mlflow-plus-storage: tracking-storage mlflow-server
 ## Install Python Dependencies
 .PHONY: requirements
 requirements:
-	conda env update --name $(PROJECT_NAME) --file environment.yml --prune
+	uv sync
 	
 
 ## Delete all compiled Python files
@@ -91,9 +91,10 @@ sync_data_up:
 ## Set up python interpreter environment
 .PHONY: create_environment
 create_environment:
-	conda env create --name $(PROJECT_NAME) -f environment.yml
+	uv venv --python $(PYTHON_VERSION)
+	uv sync
 	
-	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
+	@echo ">>> uv environment created. Activate with:\nsource .venv/bin/activate"
 	
 
 
