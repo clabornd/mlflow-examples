@@ -41,14 +41,17 @@ def main(cfg):
     cfg = OmegaConf.to_container(cfg, resolve=True)
     mlflow.set_experiment(cfg["experiment_name"])
 
+    mlflow.log_params(cfg)
+
     model = hydra.utils.instantiate(cfg["model"])
     
     model.set_logger(loggers)
-    model.learn(total_timesteps=10_000)
+    model.learn(total_timesteps=cfg['timesteps'])
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        model.save(tmpdir + "/model.zip")
-        mlflow.log_artifact(tmpdir)
+        model_path = tmpdir + "/model.zip"
+        model.save(model_path)
+        mlflow.log_artifact(model_path)
 
     model.env.close()
 

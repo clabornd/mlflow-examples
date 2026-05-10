@@ -1,6 +1,7 @@
 defaults:
   - _self_
-  - model: stable_baselines/PPO
+  - model: PPO
   - data: gym
 
+timesteps: 10000
 experiment_name: mlflow-practice
